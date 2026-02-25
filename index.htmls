@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mansib Mahadi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #F8F6F1;
+      --text:      #1A1818;
+      --muted:     #7A7472;
+      --peach:     #F2C5A8;
+      --lavender:  #D4C5F9;
+      --mint:      #B6E8D0;
+      --butter:    #F5E6A3;
+      --rose:      #F0BDCA;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-weight: 300;
+      font-size: 13px;
+      line-height: 1.7;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ─── Custom Cursor ───────────────────────────────── */
+    .cursor-dot {
+      width: 8px; height: 8px;
+      background: var(--text);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.08s ease, background 0.2s;
+    }
+    .cursor-ring {
+      width: 32px; height: 32px;
+      border: 1px solid var(--text);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.18s ease, width 0.2s, height 0.2s, border-color 0.2s;
+    }
+    body:has(a:hover) .cursor-ring,
+    body:has(button:hover) .cursor-ring {
+      width: 48px; height: 48px;
+      border-color: var(--peach);
+    }
+
+    /* ─── Nav ─────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 24px 48px;
+      mix-blend-mode: multiply;
+    }
+    nav .logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-decoration: none;
+    }
+    nav ul {
+      list-style: none;
+      display: flex; gap: 36px;
+    }
+    nav ul a {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-decoration: none;
+      position: relative;
+      opacity: 0.65;
+      transition: opacity 0.2s;
+    }
+    nav ul a::after {
+      content: '';
+      position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px;
+      background: var(--text);
+      transition: width 0.3s ease;
+    }
+    nav ul a:hover { opacity: 1; }
+    nav ul a:hover::after { width: 100%; }
+
+    /* ─── Blobs ───────────────────────────────────────── */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.55;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── Hero ────────────────────────────────────────── */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 0 48px 72px;
+      overflow: hidden;
+    }
+    #hero .blob-1 {
+      width: 520px; height: 520px;
+      background: var(--lavender);
+      top: -80px; right: -100px;
+    }
+    #hero .blob-2 {
+      width: 380px; height: 380px;
+      background: var(--peach);
+      bottom: 60px; left: 20%;
+    }
+    #hero .blob-3 {
+      width: 260px; height: 260px;
+      background: var(--mint);
+      top: 30%; left: -60px;
+    }
+
+    .hero-kicker {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 24px;
+      position: relative; z-index: 1;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+    .hero-name {
+      position: relative; z-index: 1;
+      line-height: 0.88;
+    }
+    .hero-name .line1 {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(88px, 13vw, 180px);
+      letter-spacing: -0.02em;
+      color: var(--text);
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 0.4s;
+    }
+    .hero-name .line2 {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(88px, 13vw, 180px);
+      letter-spacing: -0.02em;
+      color: var(--text);
+      padding-left: clamp(40px, 6vw, 100px);
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 0.55s;
+      position: relative;
+    }
+    .hero-name .line2 .highlight {
+      position: relative;
+      display: inline-block;
+    }
+    .hero-name .line2 .highlight::after {
+      content: '';
+      position: absolute;
+      bottom: 12px; left: -4px; right: -4px;
+      height: 18px;
+      background: var(--butter);
+      z-index: -1;
+      transform: rotate(-0.5deg);
+    }
+
+    .hero-tagline {
+      position: relative; z-index: 1;
+      margin-top: 40px;
+      display: flex; justify-content: space-between; align-items: flex-end;
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards 0.75s;
+    }
+    .hero-tagline p {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(18px, 2.2vw, 26px);
+      color: var(--muted);
+      max-width: 420px;
+    }
+    .hero-tagline .scroll-hint {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      writing-mode: vertical-rl;
+      opacity: 0.5;
+    }
+
+    /* ─── Section Base ────────────────────────────────── */
+    section { padding: 120px 48px; position: relative; }
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 56px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 32px; height: 1px;
+      background: var(--muted);
+      opacity: 0.5;
+    }
+
+    /* ─── About ───────────────────────────────────────── */
+    #about {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    #about .left {}
+    #about .right {
+      padding-top: 80px;
+    }
+    .about-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(36px, 4.5vw, 58px);
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      margin-bottom: 36px;
+    }
+    .about-headline em {
+      font-style: italic;
+      color: var(--muted);
+    }
+    .about-body {
+      font-size: 13px;
+      line-height: 1.9;
+      color: #3A3636;
+      max-width: 460px;
+    }
+    .about-body p + p { margin-top: 20px; }
+    .about-pill {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin: 6px 4px;
+    }
+    .pill-peach   { background: var(--peach);    }
+    .pill-lav     { background: var(--lavender); }
+    .pill-mint    { background: var(--mint);     }
+    .pill-butter  { background: var(--butter);   }
+    .pill-rose    { background: var(--rose);     }
+    .about-pills { margin-top: 36px; }
+
+    /* ─── Work Experience ─────────────────────────────── */
+    #work { background: #F2EFE8; }
+    .work-list { list-style: none; }
+    .work-item {
+      display: grid;
+      grid-template-columns: 160px 1fr 140px;
+      gap: 24px;
+      padding: 36px 0;
+      border-bottom: 1px solid rgba(26,24,24,0.1);
+      align-items: start;
+      cursor: default;
+      transition: background 0.25s;
+      position: relative;
+    }
+    .work-item:first-child { border-top: 1px solid rgba(26,24,24,0.1); }
+    .work-item:hover { background: rgba(255,255,255,0.5); padding-left: 16px; padding-right: 16px; margin: 0 -16px; }
+    .work-company {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 18px;
+      letter-spacing: -0.01em;
+    }
+    .work-role {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+      font-style: italic;
+    }
+    .work-desc {
+      font-size: 12.5px;
+      line-height: 1.85;
+      color: #3A3636;
+    }
+    .work-date {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-align: right;
+      padding-top: 4px;
+    }
+
+    /* ─── Projects ────────────────────────────────────── */
+    #projects {}
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .project-card {
+      padding: 36px 32px 40px;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    .project-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 60px rgba(26,24,24,0.08);
+    }
+    .project-card:nth-child(1) { background: var(--lavender); }
+    .project-card:nth-child(2) { background: var(--peach);    }
+    .project-card:nth-child(3) { background: var(--mint);     }
+    .project-card:nth-child(4) { background: var(--butter);   }
+    .project-card:nth-child(5) { background: var(--rose);     }
+    .project-card:nth-child(6) { background: #E8E2F5;         }
+    .project-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 64px;
+      font-weight: 300;
+      line-height: 1;
+      opacity: 0.18;
+      position: absolute;
+      top: 16px; right: 20px;
+    }
+    .project-tag {
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      background: rgba(26,24,24,0.1);
+      padding: 4px 10px;
+      border-radius: 100px;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+    .project-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      margin-bottom: 14px;
+    }
+    .project-desc {
+      font-size: 12px;
+      line-height: 1.8;
+      color: rgba(26,24,24,0.7);
+    }
+    .project-arrow {
+      display: inline-block;
+      margin-top: 24px;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      position: relative;
+    }
+    .project-arrow::after {
+      content: ' →';
+    }
+
+    /* ─── Interests ───────────────────────────────────── */
+    #interests { background: var(--text); color: var(--bg); overflow: hidden; }
+    #interests .section-label { color: rgba(248,246,241,0.4); }
+    #interests .section-label::before { background: rgba(248,246,241,0.3); }
+
+    .interests-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .interest-block { position: relative; }
+    .interest-icon {
+      font-size: 40px;
+      margin-bottom: 20px;
+      display: block;
+      filter: grayscale(0.2);
+    }
+    .interest-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(32px, 4vw, 52px);
+      line-height: 1.1;
+      margin-bottom: 20px;
+      color: var(--bg);
+    }
+    .interest-body {
+      font-size: 12.5px;
+      line-height: 1.9;
+      color: rgba(248,246,241,0.55);
+    }
+    .interest-tags {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 28px;
+    }
+    .interest-tag {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 100px;
+      border: 1px solid rgba(248,246,241,0.15);
+      color: rgba(248,246,241,0.6);
+      transition: background 0.2s, color 0.2s;
+    }
+    .interest-tag:hover {
+      background: rgba(248,246,241,0.1);
+      color: var(--bg);
+    }
+
+    .marquee-wrapper {
+      overflow: hidden;
+      border-top: 1px solid rgba(248,246,241,0.1);
+      margin-top: 80px;
+      padding: 28px 0;
+    }
+    .marquee {
+      display: flex;
+      gap: 48px;
+      white-space: nowrap;
+      animation: marquee 22s linear infinite;
+    }
+    .marquee span {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 15px;
+      color: rgba(248,246,241,0.3);
+      flex-shrink: 0;
+    }
+    .marquee span.sep {
+      color: rgba(248,246,241,0.12);
+    }
+
+    /* ─── Contact / Footer ────────────────────────────── */
+    #contact {
+      text-align: center;
+      padding: 120px 48px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    #contact .blob-c1 {
+      width: 400px; height: 400px;
+      background: var(--lavender);
+      top: -80px; left: -100px;
+    }
+    #contact .blob-c2 {
+      width: 350px; height: 350px;
+      background: var(--peach);
+      bottom: 0; right: -80px;
+    }
+    .contact-sup {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 32px;
+      position: relative; z-index: 1;
+    }
+    .contact-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(48px, 8vw, 110px);
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 52px;
+      position: relative; z-index: 1;
+    }
+    .contact-email {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px solid var(--text);
+      padding-bottom: 4px;
+      position: relative; z-index: 1;
+      transition: opacity 0.2s;
+    }
+    .contact-email:hover { opacity: 0.55; }
+    .social-links {
+      display: flex; justify-content: center; gap: 28px;
+      margin-top: 44px;
+      position: relative; z-index: 1;
+    }
+    .social-links a {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .social-links a:hover { color: var(--text); }
+    .footer-bar {
+      margin-top: 100px;
+      padding: 28px 48px;
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid rgba(26,24,24,0.1);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ─── Reveal Animations ───────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ─── Responsive ──────────────────────────────────── */
+    @media (max-width: 900px) {
+      nav { padding: 20px 28px; }
+      section { padding: 80px 28px; }
+      #hero { padding: 0 28px 56px; }
+      #about { grid-template-columns: 1fr; gap: 40px; }
+      #about .right { padding-top: 0; }
+      .work-item { grid-template-columns: 1fr; gap: 8px; }
+      .work-date { text-align: left; }
+      .projects-grid { grid-template-columns: 1fr 1fr; }
+      .interests-inner { grid-template-columns: 1fr; gap: 48px; }
+      .contact-headline { font-size: clamp(44px, 10vw, 80px); }
+      .footer-bar { flex-direction: column; gap: 12px; text-align: center; }
+    }
+    @media (max-width: 560px) {
+      .projects-grid { grid-template-columns: 1fr; }
+      nav ul { gap: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cursor -->
+  <div class="cursor-dot"  id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- Nav -->
+  <nav>
+    <a href="#hero" class="logo">MM</a>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#interests">Interests</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section id="hero">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <p class="hero-kicker">People · Markets · Strategy</p>
+
+    <h1 class="hero-name">
+      <span class="line1">Mansib</span>
+      <span class="line2"><span class="highlight">Mahadi</span></span>
+    </h1>
+
+    <div class="hero-tagline">
+      <p>Exploring the stories behind people,<br>markets, and strategic decisions.</p>
+      <span class="scroll-hint">Scroll</span>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <div class="left reveal">
+      <p class="section-label">About</p>
+      <h2 class="about-headline">
+        Five years in<br>the field,<br><em>still asking why.</em>
+      </h2>
+    </div>
+    <div class="right reveal">
+      <div class="about-body">
+        <p>
+          I'm Mansib — a commercial strategist operating at the intersection of consumer behaviour, retail dynamics, and category growth. With five years embedded in the FMCG landscape, I've learned that the most interesting problems aren't in the data — they're between the lines.
+        </p>
+        <p>
+          I build strategies that translate market signals into commercial action. Whether it's unlocking shelf presence, architecting a pricing play, or making sense of a shifting category — I approach it the same way: systematically, then creatively.
+        </p>
+        <p>
+          Outside work, I collect passport stamps and festival wristbands in roughly equal measure.
+        </p>
+      </div>
+      <div class="about-pills">
+        <span class="about-pill pill-peach">Category Strategy</span>
+        <span class="about-pill pill-lav">Revenue Growth</span>
+        <span class="about-pill pill-mint">Consumer Insights</span>
+        <span class="about-pill pill-butter">Trade Marketing</span>
+        <span class="about-pill pill-rose">Pricing &amp; Promo</span>
+        <span class="about-pill pill-lav">P&amp;L Management</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Work Experience -->
+  <section id="work">
+    <p class="section-label reveal">Work Experience</p>
+    <ul class="work-list">
+
+      <li class="work-item reveal">
+        <div>
+          <p class="work-company">Company Name</p>
+          <p class="work-role">Senior Trade Marketing Manager</p>
+        </div>
+        <p class="work-desc">
+          Led category growth strategy across 3 key accounts, delivering 18% YoY volume growth. Designed shopper activation programs and coordinated cross-functional go-to-market execution with brand, supply chain, and finance.
+        </p>
+        <p class="work-date">2022 — Present</p>
+      </li>
+
+      <li class="work-item reveal">
+        <div>
+          <p class="work-company">Company Name</p>
+          <p class="work-role">Commercial Planning Analyst</p>
+        </div>
+        <p class="work-desc">
+          Built the commercial planning framework adopted across the regional business unit. Owned demand forecasting, promotional ROI modelling, and joint business plan negotiations with retail partners.
+        </p>
+        <p class="work-date">2020 — 2022</p>
+      </li>
+
+      <li class="work-item reveal">
+        <div>
+          <p class="work-company">Company Name</p>
+          <p class="work-role">Key Account Executive</p>
+        </div>
+        <p class="work-desc">
+          Managed relationships with top-tier grocery retailers, executing ranging, pricing, and in-store visibility strategies that consistently outperformed category benchmarks.
+        </p>
+        <p class="work-date">2019 — 2020</p>
+      </li>
+
+    </ul>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects">
+    <p class="section-label reveal">Projects &amp; Case Studies</p>
+    <div class="projects-grid">
+
+      <div class="project-card reveal">
+        <span class="project-num">01</span>
+        <span class="project-tag">Category Strategy</span>
+        <h3 class="project-title">Reframing the Snacking Category</h3>
+        <p class="project-desc">A ground-up category review that challenged conventional shelf architecture and unlocked a 12% basket size increase across modern trade.</p>
+        <span class="project-arrow">Read more</span>
+      </div>
+
+      <div class="project-card reveal">
+        <span class="project-num">02</span>
+        <span class="project-tag">Pricing</span>
+        <h3 class="project-title">Price Pack Architecture Redesign</h3>
+        <p class="project-desc">Rebuilt the PPA model for a mid-tier beverage brand to address value perception gaps and reduce promotional dependency without volume loss.</p>
+        <span class="project-arrow">Read more</span>
+      </div>
+
+      <div class="project-card reveal">
+        <span class="project-num">03</span>
+        <span class="project-tag">Shopper Marketing</span>
+        <h3 class="project-title">Last Mile Visibility Play</h3>
+        <p class="project-desc">Designed a route-to-market activation across 1,200+ outlets in emerging trade, lifting numeric distribution by 34% in a single quarter.</p>
+        <span class="project-arrow">Read more</span>
+      </div>
+
+      <div class="project-card reveal">
+        <span class="project-num">04</span>
+        <span class="project-tag">Consumer Insight</span>
+        <h3 class="project-title">Decoding the Value Shopper</h3>
+        <p class="project-desc">A qual-meets-quant research initiative that redefined the brand's core shopper persona and directly informed a product relaunch.</p>
+        <span class="project-arrow">Read more</span>
+      </div>
+
+      <div class="project-card reveal">
+        <span class="project-num">05</span>
+        <span class="project-tag">Commercial Planning</span>
+        <h3 class="project-title">JBP Framework Overhaul</h3>
+        <p class="project-desc">Co-authored a new joint business planning template with a top-3 grocery partner, replacing legacy spreadsheets with a scenario-driven planning tool.</p>
+        <span class="project-arrow">Read more</span>
+      </div>
+
+      <div class="project-card reveal">
+        <span class="project-num">06</span>
+        <span class="project-tag">Personal</span>
+        <h3 class="project-title">Writing on Markets</h3>
+        <p class="project-desc">An ongoing series of essays on retail trends, consumer behaviour shifts, and commercial thinking — written for practitioners, not textbooks.</p>
+        <span class="project-arrow">Read more</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Interests -->
+  <section id="interests">
+    <p class="section-label">Interests</p>
+    <div class="interests-inner">
+
+      <div class="interest-block reveal">
+        <span class="interest-icon">✈</span>
+        <h3 class="interest-title">Perpetually<br>in transit.</h3>
+        <p class="interest-body">
+          Travel isn't tourism for me — it's fieldwork. Every market, every city, every convenience store aisle in a new country is a data point. I read retail differently when I'm somewhere unfamiliar.
+        </p>
+        <div class="interest-tags">
+          <span class="interest-tag">Southeast Asia</span>
+          <span class="interest-tag">Middle East</span>
+          <span class="interest-tag">Europe</span>
+          <span class="interest-tag">West Africa</span>
+          <span class="interest-tag">Off the grid</span>
+        </div>
+      </div>
+
+      <div class="interest-block reveal">
+        <span class="interest-icon">◉</span>
+        <h3 class="interest-title">Electronic<br>music devotee.</h3>
+        <p class="interest-body">
+          EDM and House aren't background noise — they're architecture. There's a reason the best sets feel like a well-structured narrative: tension, release, payoff. I find the same logic in a good commercial plan.
+        </p>
+        <div class="interest-tags">
+          <span class="interest-tag">House</span>
+          <span class="interest-tag">Techno</span>
+          <span class="interest-tag">Melodic Bass</span>
+          <span class="interest-tag">Afro House</span>
+          <span class="interest-tag">Festivals</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Marquee -->
+    <div class="marquee-wrapper">
+      <div class="marquee">
+        <span>Category Strategy</span><span class="sep">·</span>
+        <span>FMCG</span><span class="sep">·</span>
+        <span>House Music</span><span class="sep">·</span>
+        <span>Retail Intelligence</span><span class="sep">·</span>
+        <span>Commercial Planning</span><span class="sep">·</span>
+        <span>Travel</span><span class="sep">·</span>
+        <span>Consumer Behaviour</span><span class="sep">·</span>
+        <span>Pricing Strategy</span><span class="sep">·</span>
+        <span>Market Building</span><span class="sep">·</span>
+        <!-- duplicate for seamless loop -->
+        <span>Category Strategy</span><span class="sep">·</span>
+        <span>FMCG</span><span class="sep">·</span>
+        <span>House Music</span><span class="sep">·</span>
+        <span>Retail Intelligence</span><span class="sep">·</span>
+        <span>Commercial Planning</span><span class="sep">·</span>
+        <span>Travel</span><span class="sep">·</span>
+        <span>Consumer Behaviour</span><span class="sep">·</span>
+        <span>Pricing Strategy</span><span class="sep">·</span>
+        <span>Market Building</span><span class="sep">·</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="blob blob-c1"></div>
+    <div class="blob blob-c2"></div>
+    <p class="contact-sup reveal">Let's connect</p>
+    <h2 class="contact-headline reveal">Say hello.</h2>
+    <a href="/cdn-cgi/l/email-protection#88e5e9e6fbe1eac8ede5e9e1e4a6ebe7e5" class="contact-email reveal"><span class="__cf_email__" data-cfemail="2b464a455842496b4e464a424705484446">[email&#160;protected]</span></a>
+    <div class="social-links reveal">
+      <a href="#">LinkedIn</a>
+      <a href="#">Twitter / X</a>
+      <a href="#">Read.cv</a>
+    </div>
+  </section>
+
+  <footer class="footer-bar">
+    <span>© 2025 Mansib Mahadi</span>
+    <span>Dhaka, Bangladesh</span>
+    <span>Built with intent.</span>
+  </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    // ─── Cursor
+    const dot  = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.left  = mx + 'px';
+      dot.style.top   = my + 'px';
+    });
+
+    function animateRing() {
+      rx += (mx - rx) * 0.14;
+      ry += (my - ry) * 0.14;
+      ring.style.left = rx + 'px';
+      ring.style.top  = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    // ─── Scroll Reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, 80);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    reveals.forEach(el => observer.observe(el));
+
+    // ─── Stagger siblings
+    document.querySelectorAll('.work-item').f
