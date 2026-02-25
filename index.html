@@ -757,6 +757,7 @@
           <span class="interest-tag">West Africa</span>
           <span class="interest-tag">Off the grid</span>
         </div>
+        <img src="3F225A6D-75ED-4AC6-B47B-1B4E504F7CAB_1_102_o.jpeg" alt="Travel" style="width:100%;margin-top:32px;border-radius:6px;object-fit:cover;max-height:320px;opacity:0.85;" />
       </div>
 
       <div class="interest-block reveal">
@@ -846,17 +847,22 @@
     // ─── Scroll Reveal
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry, i) => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          setTimeout(() => {
-            entry.target.classList.add('visible');
-          }, 80);
+          entry.target.classList.add('visible');
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
 
     reveals.forEach(el => observer.observe(el));
+
+    // Fallback: make all reveals visible after 2s in case observer fails
+    setTimeout(() => {
+      document.querySelectorAll('.reveal:not(.visible)').forEach(el => {
+        el.classList.add('visible');
+      });
+    }, 2000);
 
     // ─── Stagger siblings
     document.querySelectorAll('.work-item').f
